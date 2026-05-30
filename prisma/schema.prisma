@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +6,8 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Enums ────────────────────────────────────────────────────
+
 enum Role {
   ADMIN
   TEACHER
@@ -18,60 +15,253 @@ enum Role {
   PARENT
 }
 
+enum PaymentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum TxType {
+  IN
+  OUT
+}
+
+enum AchievementType {
+  AKADEMIK
+  ORGANISASI
+  NON_AKADEMIK
+}
+
+enum AchievementLevel {
+  SEKOLAH
+  KABUPATEN
+  PROVINSI
+  NASIONAL
+  INTERNASIONAL
+}
+
+// ─── Core Auth ────────────────────────────────────────────────
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
+  firstName String
+  lastName  String
+  phone     String?
   role      Role     @default(STUDENT)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   studentProfile Student?
+  adminProfile   AdminProfile?
+  parentProfile  Parent?
+  notifications  Notification[]
 }
 
+// ─── Role Profiles ────────────────────────────────────────────
+
 model Student {
-  id    String @id @default(uuid())
-  name  String
-  nis   String @unique
-  major String
-  grade String
+  id        String  @id @default(uuid())
+  nis       String  @unique
+  classRoom String // e.g. "XI-IPA 2"
+  major     String // e.g. "IPA"
+  grade     String // e.g. "XI"
+  isActive  Boolean @default(true)
 
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  achievements     Achievement[]
-  organizations    Organization[]
-  extracurriculars Extracurricular[]
+  parentId String?
+  parent   Parent? @relation(fields: [parentId], references: [id])
+
+  achievements       Achievement[]
+  studentOrgs        StudentOrganization[]
+  extracurriculars   Extracurricular[]
+  paymentSubmissions PaymentSubmission[]
+  progressScores     ProgressScore[]
+  activities         ActivityLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model AdminProfile {
+  id       String  @id @default(uuid())
+  userId   Int     @unique
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position String? // e.g. "Guru BK", "Wakasek"
+}
+
+model Parent {
+  id     String @id @default(uuid())
+  userId Int    @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  children Student[]
+}
+
+// ─── School Organization (OSIS, Paskibra, KIR, etc.) ─────────
+
+model SchoolOrg {
+  id          String  @id @default(uuid())
+  name        String  @unique // "OSIS", "Paskibra", "KIR"
+  description String?
+  isActive    Boolean @default(true)
+
+  studentOrgs          StudentOrganization[]
+  treasuryTransactions TreasuryTransaction[]
+  bills                PaymentBill[]
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Student → Org (many-to-many with role) ──────────────────
+
+model StudentOrganization {
+  id       String   @id @default(uuid())
+  role     String // "Ketua", "Sekretaris", "Anggota"
+  joinedAt DateTime @default(now())
+  isActive Boolean  @default(true)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  orgId String
+  org   SchoolOrg @relation(fields: [orgId], references: [id])
+
+  @@unique([studentId, orgId])
+}
+
+// ─── Achievement ──────────────────────────────────────────────
+
 model Achievement {
-  id          String   @id @default(uuid())
+  id          String           @id @default(uuid())
   title       String
-  level       String
+  type        AchievementType  @default(AKADEMIK)
+  level       AchievementLevel @default(SEKOLAH)
   date        DateTime
   description String?
+  certUrl     String? // uploaded certificate file URL
+  isVerified  Boolean          @default(false)
 
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Organization {
-  id        String  @id @default(uuid())
-  name      String
-  position  String
-  period    String
-  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId String
-}
+// ─── Extracurricular ─────────────────────────────────────────
 
 model Extracurricular {
   id          String  @id @default(uuid())
   name        String
   description String?
+  isActive    Boolean @default(true)
 
   studentId String
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+// ─── Payment System ──────────────────────────────────────────
+
+/// Admin-created bill (tagihan) targeting students or orgs
+model PaymentBill {
+  id          String   @id @default(uuid())
+  title       String
+  amount      Int // in IDR
+  dueDate     DateTime
+  description String?
+  isActive    Boolean  @default(true)
+
+  orgId String?
+  org   SchoolOrg? @relation(fields: [orgId], references: [id])
+
+  submissions PaymentSubmission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Student's payment upload for a bill
+model PaymentSubmission {
+  id         String        @id @default(uuid())
+  status     PaymentStatus @default(PENDING)
+  fileUrl    String? // bukti bayar upload
+  note       String? // rejection reason from admin
+  verifiedAt DateTime?
+  verifiedBy String? // admin user id
+
+  billId String
+  bill   PaymentBill @relation(fields: [billId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([billId, studentId])
+}
+
+// ─── Treasury ────────────────────────────────────────────────
+
+model TreasuryTransaction {
+  id          String   @id @default(uuid())
+  type        TxType
+  title       String
+  amount      Int // in IDR
+  date        DateTime
+  description String?
+  createdById Int // admin/user who recorded it
+
+  orgId String
+  org   SchoolOrg @relation(fields: [orgId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Activity Log (Timeline) ─────────────────────────────────
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  title       String
+  type        String // "Prestasi", "Organisasi", "Eskul", "Pembayaran"
+  description String?
+  date        DateTime @default(now())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Progress Score (for parent line chart) ──────────────────
+
+model ProgressScore {
+  id    String @id @default(uuid())
+  month Int // 1-12
+  year  Int
+  score Float // activity score 0-100
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, month, year])
+}
+
+// ─── Notification ────────────────────────────────────────────
+
+model Notification {
+  id     String  @id @default(uuid())
+  text   String
+  isRead Boolean @default(false)
+  type   String? // "payment", "achievement", "info"
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
