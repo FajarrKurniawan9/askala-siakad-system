@@ -1,26 +1,96 @@
-import { Injectable } from '@nestjs/common';
+// src/submissions/submissions.service.ts
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 
+const SUBMISSION_INCLUDE = {
+  bill: true,
+  student: {
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+        },
+      },
+    },
+  },
+};
+
 @Injectable()
 export class SubmissionsService {
-  create(createSubmissionDto: CreateSubmissionDto) {
-    return 'This action adds a new submission';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(dto: CreateSubmissionDto) {
+    try {
+      return await this.prisma.paymentSubmission.create({
+        data: {
+          billId: dto.billId,
+          studentId: dto.studentId,
+          ...(dto.fileUrl && { fileUrl: dto.fileUrl }),
+        },
+        include: SUBMISSION_INCLUDE,
+      });
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2002') {
+          throw new ConflictException(
+            `A submission for billId "${dto.billId}" and studentId "${dto.studentId}" already exists`,
+          );
+        }
+        if (err.code === 'P2003') {
+          throw new NotFoundException(
+            `Referenced bill or student does not exist`,
+          );
+        }
+      }
+      throw err;
+    }
   }
 
-  findAll() {
-    return `This action returns all submissions`;
+  async findAll() {
+    return this.prisma.paymentSubmission.findMany({
+      include: SUBMISSION_INCLUDE,
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} submission`;
+  async findOne(id: string) {
+    const submission = await this.prisma.paymentSubmission.findUnique({
+      where: { id },
+      include: SUBMISSION_INCLUDE,
+    });
+    if (!submission) throw new NotFoundException(`Submission #${id} not found`);
+    return submission;
   }
 
-  update(id: number, updateSubmissionDto: UpdateSubmissionDto) {
-    return `This action updates a #${id} submission`;
+  async update(id: string, dto: UpdateSubmissionDto) {
+    await this.findOne(id);
+
+    return this.prisma.paymentSubmission.update({
+      where: { id },
+      data: {
+        ...(dto.fileUrl !== undefined && { fileUrl: dto.fileUrl }),
+        ...(dto.status && { status: dto.status }),
+        ...(dto.note !== undefined && { note: dto.note }),
+        ...(dto.verifiedBy !== undefined && { verifiedBy: dto.verifiedBy }),
+        ...(dto.status === 'VERIFIED' && { verifiedAt: new Date() }),
+      },
+      include: SUBMISSION_INCLUDE,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} submission`;
+  async remove(id: string) {
+    await this.findOne(id);
+    await this.prisma.paymentSubmission.delete({ where: { id } });
+    return { message: `Submission #${id} deleted successfully` };
   }
 }
