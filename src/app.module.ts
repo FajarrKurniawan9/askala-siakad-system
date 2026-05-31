@@ -10,7 +10,15 @@ import { BillsModule } from './bills/bills.module';
 import { SubmissionsModule } from './submissions/submissions.module';
 
 @Module({
-  imports: [StudentsModule, AuthModule, AchievementsModule, OrganizationsModule, UsersModule, BillsModule, SubmissionsModule],
+  imports: [
+    StudentsModule,
+    AuthModule,
+    AchievementsModule,
+    OrganizationsModule,
+    UsersModule,
+    BillsModule,
+    SubmissionsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
