@@ -6,8 +6,8 @@ import * as path from 'path';
 
 @Injectable()
 export class UploadService {
-  private readonly supabase: ReturnType<typeof createClient>;
-  private readonly BUCKET = 'siakad-files';
+  private supabase: ReturnType<typeof createClient>;
+  private BUCKET = 'siakad_files';
 
   constructor() {
     const supabaseUrl = process.env.SUPABASE_URL as string;
