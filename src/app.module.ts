@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { BillsModule } from './bills/bills.module';
 import { SubmissionsModule } from './submissions/submissions.module';
 import { ParentsModule } from './parents/parents.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ParentsModule } from './parents/parents.module';
     BillsModule,
     SubmissionsModule,
     ParentsModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
