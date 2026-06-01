@@ -1,4 +1,3 @@
-// src/organizations/organizations.service.ts
 import {
   ConflictException,
   Injectable,
@@ -13,6 +12,8 @@ import { UpdateOrganizationDto } from './dto/update-organization.dto';
 export class OrganizationsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // ── Create ──────────────────────────────────────────────────────────────────
+
   async create(dto: CreateOrganizationDto) {
     try {
       return await this.prisma.schoolOrg.create({
@@ -23,34 +24,36 @@ export class OrganizationsService {
         },
       });
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          throw new ConflictException(
-            `An organization with name "${dto.name}" already exists`,
-          );
-        }
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          `An organization with name "${dto.name}" already exists`,
+        );
       }
       throw err;
     }
   }
 
+  // ── Find all ─────────────────────────────────────────────────────────────────
+
   async findAll() {
-    return this.prisma.schoolOrg.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
+    return this.prisma.schoolOrg.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
+  // ── Find one ─────────────────────────────────────────────────────────────────
+
   async findOne(id: string) {
-    const org = await this.prisma.schoolOrg.findUnique({
-      where: { id },
-    });
+    const org = await this.prisma.schoolOrg.findUnique({ where: { id } });
     if (!org) throw new NotFoundException(`Organization #${id} not found`);
     return org;
   }
 
+  // ── Update ──────────────────────────────────────────────────────────────────
+
   async update(id: string, dto: UpdateOrganizationDto) {
     await this.findOne(id);
-
     try {
       return await this.prisma.schoolOrg.update({
         where: { id },
@@ -63,16 +66,19 @@ export class OrganizationsService {
         },
       });
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          throw new ConflictException(
-            `An organization with name "${dto.name}" already exists`,
-          );
-        }
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          `An organization with name "${dto.name}" already exists`,
+        );
       }
       throw err;
     }
   }
+
+  // ── Remove ──────────────────────────────────────────────────────────────────
 
   async remove(id: string) {
     await this.findOne(id);

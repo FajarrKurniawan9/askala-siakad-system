@@ -1,4 +1,3 @@
-// src/submissions/submissions.controller.ts
 import {
   Body,
   Controller,
@@ -10,6 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,8 +17,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { SubmissionsService } from './submissions.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiTags('Submissions')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN)
@@ -27,8 +27,8 @@ export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
   @Post()
-  create(@Body() createSubmissionDto: CreateSubmissionDto) {
-    return this.submissionsService.create(createSubmissionDto);
+  create(@Body() dto: CreateSubmissionDto) {
+    return this.submissionsService.create(dto);
   }
 
   @Get()
@@ -44,9 +44,9 @@ export class SubmissionsController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateSubmissionDto: UpdateSubmissionDto,
+    @Body() dto: UpdateSubmissionDto,
   ) {
-    return this.submissionsService.update(id, updateSubmissionDto);
+    return this.submissionsService.update(id, dto);
   }
 
   @Delete(':id')

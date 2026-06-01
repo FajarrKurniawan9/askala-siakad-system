@@ -1,4 +1,3 @@
-// src/achievements/achievements.controller.ts
 import {
   Body,
   Controller,
@@ -10,6 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,8 +17,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { AchievementsService } from './achievements.service';
 import { CreateAchievementDto } from './dto/create-achievement.dto';
 import { UpdateAchievementDto } from './dto/update-achievement.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiTags('Achievements')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN)
@@ -27,8 +27,8 @@ export class AchievementsController {
   constructor(private readonly achievementsService: AchievementsService) {}
 
   @Post()
-  create(@Body() createAchievementDto: CreateAchievementDto) {
-    return this.achievementsService.create(createAchievementDto);
+  create(@Body() dto: CreateAchievementDto) {
+    return this.achievementsService.create(dto);
   }
 
   @Get()
@@ -44,9 +44,9 @@ export class AchievementsController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateAchievementDto: UpdateAchievementDto,
+    @Body() dto: UpdateAchievementDto,
   ) {
-    return this.achievementsService.update(id, updateAchievementDto);
+    return this.achievementsService.update(id, dto);
   }
 
   @Delete(':id')

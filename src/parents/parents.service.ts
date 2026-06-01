@@ -1,4 +1,3 @@
-// src/parents/parents.service.ts
 import {
   ConflictException,
   Injectable,
@@ -8,8 +7,6 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
-
-// ─── Reusable include shape ───────────────────────────────────────────────────
 
 const PARENT_INCLUDE = {
   user: {
@@ -39,13 +36,11 @@ const PARENT_INCLUDE = {
   },
 } satisfies Prisma.ParentInclude;
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
 @Injectable()
 export class ParentsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // ── Create ────────────────────────────────────────────────────────────────
+  // ── Create ──────────────────────────────────────────────────────────────────
 
   async create(dto: CreateParentDto) {
     try {
@@ -60,7 +55,6 @@ export class ParentsService {
             `A Parent profile for userId ${dto.userId} already exists`,
           );
         }
-        // P2003 → referenced userId does not exist in the User table
         if (err.code === 'P2003') {
           throw new NotFoundException(
             `User #${dto.userId} not found — cannot create Parent profile`,
@@ -71,7 +65,7 @@ export class ParentsService {
     }
   }
 
-  // ── Find all ──────────────────────────────────────────────────────────────
+  // ── Find all ─────────────────────────────────────────────────────────────────
 
   async findAll() {
     return this.prisma.parent.findMany({
@@ -80,7 +74,7 @@ export class ParentsService {
     });
   }
 
-  // ── Find one ──────────────────────────────────────────────────────────────
+  // ── Find one ─────────────────────────────────────────────────────────────────
 
   async findOne(id: string) {
     const parent = await this.prisma.parent.findUnique({
@@ -91,12 +85,10 @@ export class ParentsService {
     return parent;
   }
 
-  // ── Update ────────────────────────────────────────────────────────────────
+  // ── Update ──────────────────────────────────────────────────────────────────
 
   async update(id: string, dto: UpdateParentDto) {
-    // Verify existence first so 404 is always thrown before 409
     await this.findOne(id);
-
     try {
       return await this.prisma.parent.update({
         where: { id },
@@ -122,7 +114,7 @@ export class ParentsService {
     }
   }
 
-  // ── Remove ────────────────────────────────────────────────────────────────
+  // ── Remove ──────────────────────────────────────────────────────────────────
 
   async remove(id: string) {
     await this.findOne(id);

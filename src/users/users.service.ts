@@ -1,13 +1,12 @@
-// src/users/users.service.ts
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
-  ConflictException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
 
 const USER_SELECT = {
   id: true,
@@ -24,6 +23,8 @@ const USER_SELECT = {
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // ── Create ──────────────────────────────────────────────────────────────────
+
   async create(dto: CreateUserDto) {
     const existing = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -32,17 +33,18 @@ export class UsersService {
 
     const hashed = await bcrypt.hash(dto.password, 10);
     return this.prisma.user.create({
-      data: {
-        ...dto,
-        password: hashed,
-      },
+      data: { ...dto, password: hashed },
       select: USER_SELECT,
     });
   }
 
+  // ── Find all ─────────────────────────────────────────────────────────────────
+
   async findAll() {
     return this.prisma.user.findMany({ select: USER_SELECT });
   }
+
+  // ── Find one ─────────────────────────────────────────────────────────────────
 
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
@@ -52,6 +54,8 @@ export class UsersService {
     if (!user) throw new NotFoundException(`User #${id} not found`);
     return user;
   }
+
+  // ── Update ──────────────────────────────────────────────────────────────────
 
   async update(id: number, dto: UpdateUserDto) {
     await this.findOne(id);
@@ -74,6 +78,8 @@ export class UsersService {
       select: USER_SELECT,
     });
   }
+
+  // ── Remove ──────────────────────────────────────────────────────────────────
 
   async remove(id: number) {
     await this.findOne(id);

@@ -1,4 +1,3 @@
-// src/parents/parents.controller.ts
 import {
   Body,
   Controller,
@@ -37,8 +36,6 @@ import { ParentsService } from './parents.service';
 export class ParentsController {
   constructor(private readonly parentsService: ParentsService) {}
 
-  // ── POST /parents ──────────────────────────────────────────────────────────
-
   @Post()
   @ApiOperation({
     summary: 'Create a Parent profile',
@@ -46,11 +43,9 @@ export class ParentsController {
       'Links an existing User account (role = PARENT) to a new Parent profile record.',
   })
   @ApiCreatedResponse({ description: 'Parent profile created successfully.' })
-  create(@Body() createParentDto: CreateParentDto) {
-    return this.parentsService.create(createParentDto);
+  create(@Body() dto: CreateParentDto) {
+    return this.parentsService.create(dto);
   }
-
-  // ── GET /parents ───────────────────────────────────────────────────────────
 
   @Get()
   @ApiOperation({
@@ -62,8 +57,6 @@ export class ParentsController {
   findAll() {
     return this.parentsService.findAll();
   }
-
-  // ── GET /parents/:id ───────────────────────────────────────────────────────
 
   @Get(':id')
   @ApiOperation({
@@ -77,8 +70,6 @@ export class ParentsController {
     return this.parentsService.findOne(id);
   }
 
-  // ── PATCH /parents/:id ─────────────────────────────────────────────────────
-
   @Patch(':id')
   @ApiOperation({
     summary: 'Update a Parent profile',
@@ -86,14 +77,9 @@ export class ParentsController {
   })
   @ApiOkResponse({ description: 'Parent profile updated.' })
   @ApiNotFoundResponse({ description: 'Parent not found.' })
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateParentDto: UpdateParentDto,
-  ) {
-    return this.parentsService.update(id, updateParentDto);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateParentDto) {
+    return this.parentsService.update(id, dto);
   }
-
-  // ── DELETE /parents/:id ────────────────────────────────────────────────────
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)

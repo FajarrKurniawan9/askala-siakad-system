@@ -1,9 +1,8 @@
-// src/submissions/submissions.service.ts
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -24,11 +23,13 @@ const SUBMISSION_INCLUDE = {
       },
     },
   },
-};
+} satisfies Prisma.PaymentSubmissionInclude;
 
 @Injectable()
 export class SubmissionsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  // ── Create ──────────────────────────────────────────────────────────────────
 
   async create(dto: CreateSubmissionDto) {
     try {
@@ -57,12 +58,16 @@ export class SubmissionsService {
     }
   }
 
+  // ── Find all ─────────────────────────────────────────────────────────────────
+
   async findAll() {
     return this.prisma.paymentSubmission.findMany({
       include: SUBMISSION_INCLUDE,
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  // ── Find one ─────────────────────────────────────────────────────────────────
 
   async findOne(id: string) {
     const submission = await this.prisma.paymentSubmission.findUnique({
@@ -73,11 +78,11 @@ export class SubmissionsService {
     return submission;
   }
 
+  // ── Update ──────────────────────────────────────────────────────────────────
+
   async update(id: string, dto: UpdateSubmissionDto) {
-    // ── Guard: submission must exist before entering any transaction ──
     await this.findOne(id);
 
-    // ── Non-verification updates: simple update, no transaction needed ──
     if (dto.status !== 'VERIFIED') {
       return this.prisma.paymentSubmission.update({
         where: { id },
@@ -91,42 +96,31 @@ export class SubmissionsService {
       });
     }
 
-    // ── Verification path: interactive transaction ────────────────────
-    // verifiedBy carries the admin's userId as a string (e.g. from JWT payload)
-    const adminId = dto.verifiedBy ?? null;
-    const adminIdInt = adminId !== null ? parseInt(adminId, 10) : null;
-
-    if (adminIdInt === null || isNaN(adminIdInt)) {
+    // Verification path: verifiedBy carries the admin's userId string from the JWT payload.
+    const adminIdInt =
+      dto.verifiedBy !== undefined ? parseInt(dto.verifiedBy, 10) : NaN;
+    if (isNaN(adminIdInt)) {
       throw new BadRequestException(
         'verifiedBy (admin user ID) is required when verifying a submission',
       );
     }
 
     return this.prisma.$transaction(async (tx) => {
-      // ── Step 0: Re-fetch submission with bill inside the transaction ──
-      // This ensures we read consistent data and get bill.amount / bill.orgId
+      // Re-fetch inside the transaction to read bill.amount and bill.orgId consistently,
+      // guarding against the bill being deleted between the outer findOne and this point.
       const submission = await tx.paymentSubmission.findUnique({
         where: { id },
-        include: {
-          bill: true,
-          student: true,
-        },
+        include: { bill: true, student: true },
       });
-
-      // Should never be null here, but guard defensively
-      if (!submission) {
+      if (!submission)
         throw new NotFoundException(`Submission #${id} not found`);
-      }
-
-      if (!submission.bill) {
+      if (!submission.bill)
         throw new NotFoundException(
           `Bill associated with Submission #${id} not found`,
         );
-      }
 
       const { bill, studentId } = submission;
 
-      // ── Step 1: Update PaymentSubmission → VERIFIED ───────────────
       const updatedSubmission = await tx.paymentSubmission.update({
         where: { id },
         data: {
@@ -139,9 +133,8 @@ export class SubmissionsService {
         include: SUBMISSION_INCLUDE,
       });
 
-      // ── Step 2: Record incoming treasury transaction ───────────────
-      // TreasuryTransaction.orgId is required (non-nullable in schema),
-      // so we can only create this record when the bill has an orgId.
+      // TreasuryTransaction.orgId is non-nullable in the schema, so only record
+      // an incoming transaction when the bill is linked to an org.
       if (bill.orgId) {
         await tx.treasuryTransaction.create({
           data: {
@@ -156,20 +149,21 @@ export class SubmissionsService {
         });
       }
 
-      // ── Step 3: Insert activity log for the student ────────────────
       await tx.activityLog.create({
         data: {
           title: `Pembayaran ${bill.title} Berhasil Diverifikasi`,
           type: 'Pembayaran',
           description: `Pembayaran untuk tagihan "${bill.title}" sebesar Rp ${bill.amount.toLocaleString('id-ID')} telah diverifikasi.`,
           date: new Date(),
-          studentId: studentId,
+          studentId,
         },
       });
 
       return updatedSubmission;
     });
   }
+
+  // ── Remove ──────────────────────────────────────────────────────────────────
 
   async remove(id: string) {
     await this.findOne(id);

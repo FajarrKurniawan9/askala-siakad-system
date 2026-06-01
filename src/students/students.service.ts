@@ -1,13 +1,12 @@
-// src/students/students.service.ts
 import {
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { Prisma } from '@prisma/client';
 
 const STUDENT_INCLUDE = {
   user: {
@@ -19,11 +18,13 @@ const STUDENT_INCLUDE = {
       role: true,
     },
   },
-};
+} satisfies Prisma.StudentInclude;
 
 @Injectable()
 export class StudentsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  // ── Create ──────────────────────────────────────────────────────────────────
 
   async create(dto: CreateStudentDto) {
     try {
@@ -55,16 +56,23 @@ export class StudentsService {
           }
           throw new ConflictException('Unique constraint violation');
         }
+        if (err.code === 'P2003') {
+          throw new NotFoundException(
+            `User #${dto.userId} not found — cannot create Student profile`,
+          );
+        }
       }
       throw err;
     }
   }
 
+  // ── Find all ─────────────────────────────────────────────────────────────────
+
   async findAll() {
-    return this.prisma.student.findMany({
-      include: STUDENT_INCLUDE,
-    });
+    return this.prisma.student.findMany({ include: STUDENT_INCLUDE });
   }
+
+  // ── Find one ─────────────────────────────────────────────────────────────────
 
   async findOne(id: string) {
     const student = await this.prisma.student.findUnique({
@@ -75,9 +83,10 @@ export class StudentsService {
     return student;
   }
 
+  // ── Update ──────────────────────────────────────────────────────────────────
+
   async update(id: string, dto: UpdateStudentDto) {
     await this.findOne(id);
-
     try {
       return await this.prisma.student.update({
         where: { id },
@@ -102,10 +111,17 @@ export class StudentsService {
           }
           throw new ConflictException('Unique constraint violation');
         }
+        if (err.code === 'P2003') {
+          throw new NotFoundException(
+            `Parent #${dto.parentId} not found — cannot reassign Student profile`,
+          );
+        }
       }
       throw err;
     }
   }
+
+  // ── Remove ──────────────────────────────────────────────────────────────────
 
   async remove(id: string) {
     await this.findOne(id);

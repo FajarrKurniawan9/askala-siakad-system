@@ -1,4 +1,3 @@
-// src/organizations/organizations.controller.ts
 import {
   Body,
   Controller,
@@ -10,6 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -17,8 +17,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { OrganizationsService } from './organizations.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiTags('Organizations')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.ADMIN)
@@ -27,8 +27,8 @@ export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post()
-  create(@Body() createOrganizationDto: CreateOrganizationDto) {
-    return this.organizationsService.create(createOrganizationDto);
+  create(@Body() dto: CreateOrganizationDto) {
+    return this.organizationsService.create(dto);
   }
 
   @Get()
@@ -44,9 +44,9 @@ export class OrganizationsController {
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateOrganizationDto: UpdateOrganizationDto,
+    @Body() dto: UpdateOrganizationDto,
   ) {
-    return this.organizationsService.update(id, updateOrganizationDto);
+    return this.organizationsService.update(id, dto);
   }
 
   @Delete(':id')

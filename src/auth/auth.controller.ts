@@ -1,19 +1,20 @@
-// src/auth/auth.controller.ts
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
-  UseGuards,
-  Get,
   Request,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -42,7 +43,7 @@ export class AuthController {
   logout() {
     return {
       message:
-        'Logout success! You may now safely delete the token from the Frontend!.',
+        'Logout successful. You may safely remove the token on the client side.',
     };
   }
 }
