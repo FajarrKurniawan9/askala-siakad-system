@@ -8,6 +8,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { UsersModule } from './users/users.module';
 import { BillsModule } from './bills/bills.module';
 import { SubmissionsModule } from './submissions/submissions.module';
+import { ParentsModule } from './parents/parents.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SubmissionsModule } from './submissions/submissions.module';
     UsersModule,
     BillsModule,
     SubmissionsModule,
+    ParentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
