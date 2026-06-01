@@ -6,12 +6,12 @@ import * as path from 'path';
 
 @Injectable()
 export class UploadService {
-  private readonly supabase: any;
+  private readonly supabase: ReturnType<typeof createClient>;
   private readonly BUCKET = 'siakad-files';
 
   constructor() {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_KEY;
+    const supabaseUrl = process.env.SUPABASE_URL as string;
+    const supabaseKey = process.env.SUPABASE_KEY as string;
 
     if (!supabaseUrl || !supabaseKey) {
       throw new Error(
