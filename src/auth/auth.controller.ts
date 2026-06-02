@@ -34,6 +34,7 @@ export class AuthController {
   @Get('me')
   getProfile(@Request() req: any) {
     const targetId = req.user.userId || req.user.sub || req.user.id;
+
     return this.authService.getProfile(Number(targetId));
   }
 
