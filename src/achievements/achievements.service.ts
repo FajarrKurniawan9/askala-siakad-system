@@ -36,6 +36,8 @@ export class AchievementsService {
           description: dto.description,
           certUrl: dto.certUrl,
           studentId: dto.studentId,
+          position: dto.position,
+          organizer: dto.organizer,
         },
         include: ACHIEVEMENT_INCLUDE,
       });
