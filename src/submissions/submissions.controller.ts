@@ -31,12 +31,12 @@ import { SubmissionsService } from './submissions.service';
 @ApiTags('Submissions')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller('submissions')
 export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
   @Post()
+  @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
     summary: 'Create a payment submission',
     description:
@@ -62,6 +62,7 @@ export class SubmissionsController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'List all payment submissions',
     description:
@@ -76,6 +77,7 @@ export class SubmissionsController {
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'Get a single payment submission',
     description:
@@ -95,6 +97,7 @@ export class SubmissionsController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Update or verify a payment submission',
     description:
@@ -133,6 +136,7 @@ export class SubmissionsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete a payment submission',
     description:

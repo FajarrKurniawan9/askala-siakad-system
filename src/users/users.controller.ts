@@ -30,12 +30,12 @@ import { UsersService } from './users.service';
 @ApiTags('Users')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Create a new user account',
     description:
@@ -53,6 +53,7 @@ export class UsersController {
   }
 
   @Get()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'List all user accounts',
     description:
@@ -68,6 +69,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Get a single user account',
     description:
@@ -87,6 +89,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Update a user account',
     description:
@@ -112,6 +115,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete a user account',
     description:

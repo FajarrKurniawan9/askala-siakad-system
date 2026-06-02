@@ -30,12 +30,12 @@ import { OrganizationsService } from './organizations.service';
 @ApiTags('Organizations')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller('organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Create a school organization',
     description:
@@ -54,6 +54,7 @@ export class OrganizationsController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'List all school organizations',
     description:
@@ -69,6 +70,7 @@ export class OrganizationsController {
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'Get a single school organization',
     description: 'Fetches one school organization by its UUID.',
@@ -87,6 +89,7 @@ export class OrganizationsController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Update a school organization',
     description:
@@ -115,6 +118,7 @@ export class OrganizationsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete a school organization',
     description:

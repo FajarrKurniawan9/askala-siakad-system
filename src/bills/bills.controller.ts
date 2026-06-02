@@ -29,12 +29,12 @@ import { UpdateBillDto } from './dto/update-bill.dto';
 @ApiTags('Bills')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller('bills')
 export class BillsController {
   constructor(private readonly billsService: BillsService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Create a payment bill (tagihan)',
     description:
@@ -53,6 +53,7 @@ export class BillsController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'List all payment bills',
     description:
@@ -67,6 +68,7 @@ export class BillsController {
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'Get a single payment bill',
     description:
@@ -86,6 +88,7 @@ export class BillsController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Update a payment bill',
     description:
@@ -108,6 +111,7 @@ export class BillsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete a payment bill',
     description:

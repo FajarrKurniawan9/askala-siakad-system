@@ -29,12 +29,12 @@ import { UpdateAchievementDto } from './dto/update-achievement.dto';
 @ApiTags('Achievements')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller('achievements')
 export class AchievementsController {
   constructor(private readonly achievementsService: AchievementsService) {}
 
   @Post()
+  @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
     summary: 'Record a student achievement',
     description:
@@ -53,6 +53,7 @@ export class AchievementsController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'List all achievements',
     description:
@@ -68,6 +69,7 @@ export class AchievementsController {
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'Get a single achievement',
     description:
@@ -88,6 +90,7 @@ export class AchievementsController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
     summary: 'Update an achievement',
     description:
@@ -114,6 +117,7 @@ export class AchievementsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete an achievement',
     description:

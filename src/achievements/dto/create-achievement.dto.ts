@@ -37,4 +37,12 @@ export class CreateAchievementDto {
   @IsUUID()
   @IsNotEmpty()
   studentId!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  position!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  organizer!: string;
 }

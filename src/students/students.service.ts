@@ -68,8 +68,18 @@ export class StudentsService {
 
   // ── Find all ─────────────────────────────────────────────────────────────────
 
+  private serialize(student: any) {
+    return {
+      ...student,
+      kelas: student.classRoom,
+      jurusan: student.major,
+    };
+  }
   async findAll() {
-    return this.prisma.student.findMany({ include: STUDENT_INCLUDE });
+    const students = await this.prisma.student.findMany({
+      include: STUDENT_INCLUDE,
+    });
+    return students.map(this.serialize);
   }
 
   // ── Find one ─────────────────────────────────────────────────────────────────

@@ -30,12 +30,12 @@ import { StudentsService } from './students.service';
 @ApiTags('Students')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Create a student profile',
     description:
@@ -57,6 +57,7 @@ export class StudentsController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'List all student profiles',
     description:
@@ -71,6 +72,7 @@ export class StudentsController {
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'Get a single student profile',
     description:
@@ -90,6 +92,7 @@ export class StudentsController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Update a student profile',
     description:
@@ -119,6 +122,7 @@ export class StudentsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete a student profile',
     description:

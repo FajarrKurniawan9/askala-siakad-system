@@ -142,6 +142,8 @@ model Achievement {
   title       String
   type        AchievementType  @default(AKADEMIK)
   level       AchievementLevel @default(SEKOLAH)
+  position    String
+  organizer   String
   date        DateTime
   description String?
   certUrl     String? // uploaded certificate file URL

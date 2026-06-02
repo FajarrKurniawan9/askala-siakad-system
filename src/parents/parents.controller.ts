@@ -31,12 +31,12 @@ import { ParentsService } from './parents.service';
 @ApiTags('Parents')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
 @Controller('parents')
 export class ParentsController {
   constructor(private readonly parentsService: ParentsService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Create a Parent profile',
     description:
@@ -48,6 +48,7 @@ export class ParentsController {
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'List all Parent profiles',
     description:
@@ -59,6 +60,7 @@ export class ParentsController {
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'Get a single Parent profile',
     description:
@@ -71,6 +73,7 @@ export class ParentsController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Update a Parent profile',
     description: 'Partially updates a Parent profile (e.g. reassigns userId).',
@@ -82,6 +85,7 @@ export class ParentsController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Delete a Parent profile',
