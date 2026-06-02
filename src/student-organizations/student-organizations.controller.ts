@@ -1,0 +1,61 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { StudentOrganizationsService } from './student-organizations.service';
+import { CreateStudentOrganizationDto } from './dto/create-student-organization.dto';
+import { UpdateStudentOrganizationDto } from './dto/update-student-organization.dto';
+
+@ApiTags('Student Organizations')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Controller('student-organizations')
+export class StudentOrganizationsController {
+  constructor(
+    private readonly studentOrganizationsService: StudentOrganizationsService,
+  ) {}
+
+  @Post()
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Admin menambahkan siswa ke dalam organisasi' })
+  create(@Body() dto: CreateStudentOrganizationDto) {
+    return this.studentOrganizationsService.create(dto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Lihat semua daftar anggota organisasi' })
+  findAll() {
+    return this.studentOrganizationsService.findAll();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Lihat detail satu keanggotaan siswa' })
+  findOne(@Param('id') id: string) {
+    return this.studentOrganizationsService.findOne(id);
+  }
+
+  @Patch(':id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Admin mengupdate jabatan atau status anggota' })
+  update(@Param('id') id: string, @Body() dto: UpdateStudentOrganizationDto) {
+    return this.studentOrganizationsService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Admin mengeluarkan siswa dari organisasi' })
+  remove(@Param('id') id: string) {
+    return this.studentOrganizationsService.remove(id);
+  }
+}

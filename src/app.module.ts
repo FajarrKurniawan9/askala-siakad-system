@@ -10,6 +10,12 @@ import { BillsModule } from './bills/bills.module';
 import { SubmissionsModule } from './submissions/submissions.module';
 import { ParentsModule } from './parents/parents.module';
 import { UploadModule } from './upload/upload.module';
+import { StudentOrganizationsModule } from './student-organizations/student-organizations.module';
+import { ExtracurricularsModule } from './extracurriculars/extracurriculars.module';
+import { TreasuryModule } from './treasury/treasury.module';
+import { ProgressScoresModule } from './progress-scores/progress-scores.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -22,6 +28,12 @@ import { UploadModule } from './upload/upload.module';
     SubmissionsModule,
     ParentsModule,
     UploadModule,
+    StudentOrganizationsModule,
+    ExtracurricularsModule,
+    TreasuryModule,
+    ProgressScoresModule,
+    ActivitiesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

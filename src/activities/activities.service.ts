@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateAchievementDto } from './dto/create-achievement.dto';
-import { UpdateAchievementDto } from './dto/update-achievement.dto';
+import { CreateActivityDto } from './dto/create-activity.dto';
+import { UpdateActivityDto } from './dto/update-activity.dto';
 
-const ACHIEVEMENT_INCLUDE = {
+const ACTIVITY_INCLUDE = {
   student: {
     include: {
       user: {
@@ -17,29 +17,25 @@ const ACHIEVEMENT_INCLUDE = {
       },
     },
   },
-} satisfies Prisma.AchievementInclude;
+} satisfies Prisma.ActivityLogInclude;
 
 @Injectable()
-export class AchievementsService {
+export class ActivitiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   // ── Create ──────────────────────────────────────────────────────────────────
 
-  async create(dto: CreateAchievementDto) {
+  async create(dto: CreateActivityDto) {
     try {
-      return await this.prisma.achievement.create({
+      return await this.prisma.activityLog.create({
         data: {
           title: dto.title,
           type: dto.type,
-          level: dto.level,
-          date: new Date(dto.date),
           description: dto.description,
-          certificateUrl: dto.certificateUrl,
+          ...(dto.date && { date: new Date(dto.date) }),
           studentId: dto.studentId,
-          position: dto.position,
-          organizer: dto.organizer,
         },
-        include: ACHIEVEMENT_INCLUDE,
+        include: ACTIVITY_INCLUDE,
       });
     } catch (err) {
       if (
@@ -55,9 +51,9 @@ export class AchievementsService {
   // ── Find all ─────────────────────────────────────────────────────────────────
 
   async findAll(studentId?: string) {
-    return this.prisma.achievement.findMany({
+    return this.prisma.activityLog.findMany({
       where: studentId ? { studentId } : undefined,
-      include: ACHIEVEMENT_INCLUDE,
+      include: ACTIVITY_INCLUDE,
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -65,33 +61,28 @@ export class AchievementsService {
   // ── Find one ─────────────────────────────────────────────────────────────────
 
   async findOne(id: string) {
-    const achievement = await this.prisma.achievement.findUnique({
+    const activity = await this.prisma.activityLog.findUnique({
       where: { id },
-      include: ACHIEVEMENT_INCLUDE,
+      include: ACTIVITY_INCLUDE,
     });
-    if (!achievement)
-      throw new NotFoundException(`Achievement #${id} not found`);
-    return achievement;
+    if (!activity)
+      throw new NotFoundException(`Activity #${id} not found`);
+    return activity;
   }
 
   // ── Update ──────────────────────────────────────────────────────────────────
 
-  async update(id: string, dto: UpdateAchievementDto) {
+  async update(id: string, dto: UpdateActivityDto) {
     await this.findOne(id);
-    return this.prisma.achievement.update({
+    return this.prisma.activityLog.update({
       where: { id },
       data: {
         ...(dto.title && { title: dto.title }),
         ...(dto.type && { type: dto.type }),
-        ...(dto.level && { level: dto.level }),
-        ...(dto.date && { date: new Date(dto.date) }),
         ...(dto.description !== undefined && { description: dto.description }),
-        ...(dto.certificateUrl !== undefined && {
-          certificateUrl: dto.certificateUrl,
-        }),
-        ...(dto.isVerified !== undefined && { isVerified: dto.isVerified }),
+        ...(dto.date && { date: new Date(dto.date) }),
       },
-      include: ACHIEVEMENT_INCLUDE,
+      include: ACTIVITY_INCLUDE,
     });
   }
 
@@ -99,7 +90,7 @@ export class AchievementsService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.achievement.delete({ where: { id } });
-    return { message: `Achievement #${id} deleted successfully` };
+    await this.prisma.activityLog.delete({ where: { id } });
+    return { message: `Activity #${id} deleted successfully` };
   }
 }

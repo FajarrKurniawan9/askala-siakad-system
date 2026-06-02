@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -16,6 +17,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
@@ -57,15 +59,22 @@ export class AchievementsController {
   @ApiOperation({
     summary: 'List all achievements',
     description:
-      'Returns all achievement records across every student, ordered by creation date (newest first). ' +
+      'Returns all achievement records, ordered by creation date (newest first). ' +
+      'Optionally filter by `studentId` to return only achievements for a specific student. ' +
       'Each achievement includes the full student profile and their linked user details ' +
       '(first name, last name, email, phone).',
   })
-  @ApiOkResponse({
-    description: 'List of all achievements returned successfully.',
+  @ApiQuery({
+    name: 'studentId',
+    required: false,
+    description: 'Filter achievements by student UUID.',
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  findAll() {
-    return this.achievementsService.findAll();
+  @ApiOkResponse({
+    description: 'List of achievements returned successfully.',
+  })
+  findAll(@Query('studentId') studentId?: string) {
+    return this.achievementsService.findAll(studentId);
   }
 
   @Get(':id')

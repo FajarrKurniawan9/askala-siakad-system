@@ -69,12 +69,13 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
     summary: 'Get a single user account',
     description:
       'Fetches one user account by its numeric integer ID (auto-incremented, not a UUID). ' +
-      'Returns 404 if no user with the given ID exists.',
+      'Returns 404 if no user with the given ID exists. ' +
+      'Accessible by ADMIN, STUDENT, and PARENT roles.',
   })
   @ApiParam({
     name: 'id',

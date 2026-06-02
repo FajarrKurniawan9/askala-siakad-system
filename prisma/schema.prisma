@@ -162,6 +162,7 @@ model Extracurricular {
   id          String  @id @default(uuid())
   name        String
   description String?
+  schedule    String?
   isActive    Boolean @default(true)
 
   studentId String
