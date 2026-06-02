@@ -9,7 +9,16 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -27,26 +36,97 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create a new user account',
+    description:
+      'Registers a new user account in the system. The password is automatically ' +
+      'hashed before storage — never send or store plain-text passwords. ' +
+      'The `email` must be unique across all accounts. ' +
+      'Role defaults to `STUDENT` if not provided. Only accessible by ADMIN.',
+  })
+  @ApiCreatedResponse({ description: 'User account created successfully.' })
+  @ApiConflictResponse({
+    description: 'An account with this email address already exists.',
+  })
   create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'List all user accounts',
+    description:
+      'Returns all registered user accounts. ' +
+      'The `password` field is always excluded from the response for security. ' +
+      'Only accessible by ADMIN.',
+  })
+  @ApiOkResponse({
+    description: 'List of all user accounts returned successfully.',
+  })
   findAll() {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get a single user account',
+    description:
+      'Fetches one user account by its numeric integer ID (auto-incremented, not a UUID). ' +
+      'Returns 404 if no user with the given ID exists.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'The numeric integer ID of the user (e.g. 1, 2, 42).',
+    type: Number,
+    example: 1,
+  })
+  @ApiOkResponse({ description: 'User account found and returned.' })
+  @ApiNotFoundResponse({ description: 'No user with the given ID exists.' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiOperation({
+    summary: 'Update a user account',
+    description:
+      'Partially updates a user account. All fields in the request body are optional — ' +
+      'only the fields you provide will be changed. ' +
+      'If a new `password` is supplied, it will be automatically re-hashed. ' +
+      'If a new `email` is supplied, it must not conflict with another existing account.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'The numeric integer ID of the user to update.',
+    type: Number,
+    example: 1,
+  })
+  @ApiOkResponse({ description: 'User account updated successfully.' })
+  @ApiNotFoundResponse({ description: 'No user with the given ID exists.' })
+  @ApiConflictResponse({
+    description:
+      'The provided email address is already in use by another account.',
+  })
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
   }
 
   @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete a user account',
+    description:
+      'Permanently deletes a user account. This action is irreversible. ' +
+      'Due to `ON DELETE CASCADE` in the database schema, any linked `Student`, `Parent`, ' +
+      'or `AdminProfile` records belonging to this user will also be automatically deleted.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'The numeric integer ID of the user to delete.',
+    type: Number,
+    example: 1,
+  })
+  @ApiOkResponse({ description: 'User account deleted successfully.' })
+  @ApiNotFoundResponse({ description: 'No user with the given ID exists.' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
