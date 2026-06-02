@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateBillDto } from './dto/create-bill.dto';
 import { UpdateBillDto } from './dto/update-bill.dto';
+import { PaymentBill, SchoolOrg } from '@prisma/client';
 
 const BILL_INCLUDE = {
   org: true,
@@ -11,7 +12,7 @@ const BILL_INCLUDE = {
 @Injectable()
 export class BillsService {
   constructor(private readonly prisma: PrismaService) {}
-  private serialize(bill: any) {
+  private serialize(bill: PaymentBill & { org: SchoolOrg | null }) {
     return { ...bill, organization: bill.org };
   }
   // ── Create ──────────────────────────────────────────────────────────────────

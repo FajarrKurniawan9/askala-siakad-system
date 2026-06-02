@@ -24,11 +24,13 @@ const STUDENT_INCLUDE = {
 export class StudentsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private serialize(student: any) {
+  private serialize(
+    student: Prisma.StudentGetPayload<{ include: typeof STUDENT_INCLUDE }>,
+  ) {
     return {
       ...student,
-      kelas: student.classRoom, // alias untuk frontend
-      jurusan: student.major, // alias untuk frontend
+      kelas: student.classRoom,
+      jurusan: student.major,
     };
   }
 
@@ -80,7 +82,7 @@ export class StudentsService {
     const students = await this.prisma.student.findMany({
       include: STUDENT_INCLUDE,
     });
-    return students.map((student: any) => this.serialize(student));
+    return students.map((student) => this.serialize(student));
   }
 
   // ── Find one ─────────────────────────────────────────────────────────────────
