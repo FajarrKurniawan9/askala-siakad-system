@@ -18,6 +18,7 @@ const STUDENT_INCLUDE = {
       role: true,
     },
   },
+  extracurriculars: true,
 } satisfies Prisma.StudentInclude;
 
 @Injectable()
@@ -29,6 +30,7 @@ export class StudentsService {
   ) {
     return {
       ...student,
+      fullName: `${student.user.firstName} ${student.user.lastName}`,
       kelas: student.classRoom,
       jurusan: student.major,
     };
