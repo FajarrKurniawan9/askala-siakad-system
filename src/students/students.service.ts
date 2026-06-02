@@ -24,6 +24,14 @@ const STUDENT_INCLUDE = {
 export class StudentsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private serialize(student: any) {
+    return {
+      ...student,
+      kelas: student.classRoom, // alias untuk frontend
+      jurusan: student.major, // alias untuk frontend
+    };
+  }
+
   // ── Create ──────────────────────────────────────────────────────────────────
 
   async create(dto: CreateStudentDto) {
@@ -68,18 +76,11 @@ export class StudentsService {
 
   // ── Find all ─────────────────────────────────────────────────────────────────
 
-  private serialize(student: any) {
-    return {
-      ...student,
-      kelas: student.classRoom,
-      jurusan: student.major,
-    };
-  }
   async findAll() {
     const students = await this.prisma.student.findMany({
       include: STUDENT_INCLUDE,
     });
-    return students.map(this.serialize);
+    return students.map((student: any) => this.serialize(student));
   }
 
   // ── Find one ─────────────────────────────────────────────────────────────────
@@ -90,7 +91,7 @@ export class StudentsService {
       include: STUDENT_INCLUDE,
     });
     if (!student) throw new NotFoundException(`Student #${id} not found`);
-    return student;
+    return this.serialize(student);
   }
 
   // ── Update ──────────────────────────────────────────────────────────────────

@@ -13,7 +13,13 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-
+interface RequestWithUser {
+  user: {
+    userId?: number;
+    sub?: number;
+    id?: number;
+  };
+}
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -32,7 +38,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getProfile(@Request() req: any) {
+  getProfile(@Request() req: RequestWithUser) {
     const targetId = req.user.userId || req.user.sub || req.user.id;
 
     return this.authService.getProfile(Number(targetId));

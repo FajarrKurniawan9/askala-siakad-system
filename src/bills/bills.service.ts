@@ -11,7 +11,9 @@ const BILL_INCLUDE = {
 @Injectable()
 export class BillsService {
   constructor(private readonly prisma: PrismaService) {}
-
+  private serialize(bill: any) {
+    return { ...bill, organization: bill.org };
+  }
   // ── Create ──────────────────────────────────────────────────────────────────
 
   async create(dto: CreateBillDto) {
@@ -54,7 +56,7 @@ export class BillsService {
       include: BILL_INCLUDE,
     });
     if (!bill) throw new NotFoundException(`Bill #${id} not found`);
-    return bill;
+    return this.serialize(bill);
   }
 
   // ── Update ──────────────────────────────────────────────────────────────────

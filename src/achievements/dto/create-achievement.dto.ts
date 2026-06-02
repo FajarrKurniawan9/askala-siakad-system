@@ -32,7 +32,7 @@ export class CreateAchievementDto {
 
   @IsString()
   @IsOptional()
-  certUrl?: string;
+  certificateUrl?: string;
 
   @IsUUID()
   @IsNotEmpty()

@@ -146,7 +146,7 @@ model Achievement {
   organizer   String
   date        DateTime
   description String?
-  certUrl     String? // uploaded certificate file URL
+  certificateUrl String? // uploaded certificate file URL
   isVerified  Boolean          @default(false)
 
   studentId String
