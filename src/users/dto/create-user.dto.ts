@@ -45,6 +45,14 @@ export class CreateUserDto {
   phone?: string;
 
   @ApiPropertyOptional({
+    example: 'https://example.supabase.co/storage/v1/object/public/siakad_files/avatar.jpg',
+    description: 'URL foto profil pengguna (opsional)',
+  })
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string;
+
+  @ApiPropertyOptional({
     example: 'ADMIN',
     description:
       'Peran pengguna dalam sistem SIAKAD (contoh: ADMIN, TEACHER, PARENT, STUDENT)',

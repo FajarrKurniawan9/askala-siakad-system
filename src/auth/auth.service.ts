@@ -83,6 +83,7 @@ export class AuthService {
         firstName: true,
         lastName: true,
         phone: true,
+        avatarUrl: true,
         role: true,
         createdAt: true,
         updatedAt: true,
@@ -97,6 +98,7 @@ export class AuthService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      avatarUrl: user.avatarUrl,
       role: user.role,
     };
   }
