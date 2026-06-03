@@ -7,9 +7,18 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://app-askala.vercel.app/'],
+    origin: [
+      'http://localhost:3000',
+      'https://app-askala.vercel.app', // NO trailing slash — must match the browser's Origin header exactly
+    ],
     credentials: true,
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+    ],
   });
   app.useGlobalPipes(
     new ValidationPipe({
