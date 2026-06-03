@@ -37,7 +37,7 @@ export class StudentsController {
   @Post()
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Create a student profile',
+    summary: 'Create a student profile (Admin Only)',
     description:
       'Creates a student profile and links it to an existing User account via `userId`. ' +
       'The referenced User account must already exist (role `STUDENT` recommended) — a 404 is returned otherwise. ' +
@@ -59,7 +59,7 @@ export class StudentsController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all student profiles',
+    summary: 'List all student profiles (Admin, Student, or Parent Only)',
     description:
       'Returns all student profiles, each including the linked user details ' +
       '(first name, last name, email, phone, and role).',
@@ -74,7 +74,7 @@ export class StudentsController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single student profile',
+    summary: 'Get a single student profile (Admin, Student, or Parent Only)',
     description:
       'Fetches one student profile by its UUID, including the linked user details.',
   })
@@ -94,7 +94,7 @@ export class StudentsController {
   @Patch(':id')
   @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
-    summary: 'Update a student profile',
+    summary: 'Update a student profile (Admin or Student Only)',
     description:
       'Partially updates a student profile. All fields are optional. ' +
       'If `nis` is changed, it must remain unique across all students. ' +
@@ -124,7 +124,7 @@ export class StudentsController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete a student profile',
+    summary: 'Delete a student profile (Admin Only)',
     description:
       'Permanently deletes a student profile. This action is irreversible. ' +
       'Due to `ON DELETE CASCADE` in the database schema, all records belonging to this student — ' +

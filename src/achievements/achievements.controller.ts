@@ -57,7 +57,7 @@ export class AchievementsController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all achievements (Optionally filter by student)',
+    summary: 'List all achievements (Admin, Student, or Parent Only)',
     description:
       'Returns all achievement records, ordered by creation date (newest first). ' +
       'Optionally filter by `studentId` to return only achievements for a specific student. ' +

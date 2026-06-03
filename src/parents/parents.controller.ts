@@ -38,7 +38,7 @@ export class ParentsController {
   @Post()
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Create a Parent profile',
+    summary: 'Create a Parent profile (Admin Only)',
     description:
       'Links an existing User account (role = PARENT) to a new Parent profile record.',
   })
@@ -50,7 +50,7 @@ export class ParentsController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all Parent profiles',
+    summary: 'List all Parent profiles (Admin, Student, or Parent Only)',
     description:
       'Returns every Parent profile including their linked User details and associated Student children.',
   })
@@ -62,7 +62,7 @@ export class ParentsController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single Parent profile',
+    summary: 'Get a single Parent profile (Admin, Student, or Parent Only)',
     description:
       'Fetches one Parent by UUID, including User details and their Student children.',
   })
@@ -75,7 +75,7 @@ export class ParentsController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Update a Parent profile',
+    summary: 'Update a Parent profile (Admin Only)',
     description: 'Partially updates a Parent profile (e.g. reassigns userId).',
   })
   @ApiOkResponse({ description: 'Parent profile updated.' })
@@ -88,7 +88,7 @@ export class ParentsController {
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Delete a Parent profile',
+    summary: 'Delete a Parent profile (Admin Only)',
     description:
       'Removes the Parent profile record. The linked User account is not affected.',
   })

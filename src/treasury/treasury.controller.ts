@@ -38,13 +38,15 @@ export class TreasuryController {
   @Post()
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Create a treasury transaction',
+    summary: 'Create a treasury transaction (Admin Only)',
     description:
       'Records a new income (IN) or expense (OUT) transaction for a school organization. ' +
       'The `orgId` must reference an existing organization — a 404 is returned otherwise. ' +
       'Note: income records are also created automatically when payment submissions are verified.',
   })
-  @ApiCreatedResponse({ description: 'Treasury transaction created successfully.' })
+  @ApiCreatedResponse({
+    description: 'Treasury transaction created successfully.',
+  })
   @ApiNotFoundResponse({
     description: 'The referenced organization (orgId) does not exist.',
   })
@@ -55,7 +57,7 @@ export class TreasuryController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all treasury transactions',
+    summary: 'List all treasury transactions (Admin, Student, or Parent Only)',
     description:
       'Returns all treasury transactions, ordered by date (newest first). ' +
       'Optionally filter by `orgId` to return only transactions for a specific organization. ' +
@@ -77,7 +79,8 @@ export class TreasuryController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single treasury transaction',
+    summary:
+      'Get a single treasury transaction (Admin, Student, or Parent Only)',
     description:
       'Fetches one treasury transaction by its UUID. ' +
       'Returns 404 if no transaction with the given ID exists.',
@@ -98,7 +101,7 @@ export class TreasuryController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Update a treasury transaction',
+    summary: 'Update a treasury transaction (Admin Only)',
     description:
       'Partially updates a treasury transaction. All fields are optional. ' +
       'If `orgId` is changed, the new organization must exist.',
@@ -123,7 +126,7 @@ export class TreasuryController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete a treasury transaction',
+    summary: 'Delete a treasury transaction (Admin Only)',
     description:
       'Permanently deletes a treasury transaction. This action is irreversible.',
   })

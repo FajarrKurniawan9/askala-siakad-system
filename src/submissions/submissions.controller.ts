@@ -38,7 +38,7 @@ export class SubmissionsController {
   @Post()
   @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
-    summary: 'Create a payment submission',
+    summary: 'Create a payment submission (Admin and Student Only)',
     description:
       'Creates a new payment submission that records a student uploading proof of payment for a specific bill. ' +
       'Both `billId` and `studentId` must reference existing records. ' +
@@ -64,7 +64,7 @@ export class SubmissionsController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all payment submissions',
+    summary: 'List all payment submissions (Admin, Student, or Parent Only)',
     description:
       'Returns all payment submissions ordered by creation date (newest first). ' +
       'Each submission includes the full bill details and the student profile with linked user details.',
@@ -79,7 +79,7 @@ export class SubmissionsController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single payment submission',
+    summary: 'Get a single payment submission (Admin, Student, or Parent Only)',
     description:
       'Fetches one payment submission by its UUID, including bill and student details.',
   })
@@ -99,7 +99,7 @@ export class SubmissionsController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Update or verify a payment submission',
+    summary: 'Update or verify a payment submission (Admin Only)',
     description:
       'Partially updates a payment submission. This endpoint handles two distinct flows:\n\n' +
       '**Standard update** (`status` is `PENDING` or `REJECTED`): ' +
@@ -138,7 +138,7 @@ export class SubmissionsController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete a payment submission',
+    summary: 'Delete a payment submission (Admin Only)',
     description:
       'Permanently deletes a payment submission. This action is irreversible. ' +
       'Deleting a verified submission does NOT reverse the treasury transaction or activity log ' +

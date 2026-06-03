@@ -37,7 +37,7 @@ export class OrganizationsController {
   @Post()
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Create a school organization',
+    summary: 'Create a school organization (Admin Only)',
     description:
       'Creates a new school organization record (e.g. OSIS, Paskibra, KIR, Rohis). ' +
       'Organization `name` must be unique system-wide — a 409 is returned on duplicates. ' +
@@ -56,7 +56,7 @@ export class OrganizationsController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all school organizations',
+    summary: 'List all school organizations (Admin, Student, or Parent Only)',
     description:
       'Returns all school organizations ordered by creation date (newest first). ' +
       'Includes both active and inactive organizations. ' +
@@ -72,7 +72,8 @@ export class OrganizationsController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single school organization',
+    summary:
+      'Get a single school organization (Admin, Student, or Parent Only)',
     description: 'Fetches one school organization by its UUID.',
   })
   @ApiParam({
@@ -91,7 +92,7 @@ export class OrganizationsController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Update a school organization',
+    summary: 'Update a school organization (Admin Only)',
     description:
       'Partially updates a school organization. All fields are optional. ' +
       'To temporarily deactivate an organization without deleting it, set `isActive: false`. ' +
@@ -120,7 +121,7 @@ export class OrganizationsController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete a school organization',
+    summary: 'Delete a school organization (Admin Only)',
     description:
       'Permanently deletes a school organization. This action is irreversible. ' +
       'Warning: deletion will fail if student membership records, treasury transactions, ' +

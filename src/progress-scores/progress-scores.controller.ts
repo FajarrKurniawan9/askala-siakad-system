@@ -33,14 +33,12 @@ import { UpdateProgressScoreDto } from './dto/update-progress-score.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('progress-scores')
 export class ProgressScoresController {
-  constructor(
-    private readonly progressScoresService: ProgressScoresService,
-  ) {}
+  constructor(private readonly progressScoresService: ProgressScoresService) {}
 
   @Post()
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Create or update a progress score',
+    summary: 'Create or update a progress score (Admin Only)',
     description:
       'Creates a new progress score for a student in a given month/year. ' +
       'If a score for the same student+month+year already exists, it is updated (upsert). ' +
@@ -59,7 +57,7 @@ export class ProgressScoresController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all progress scores',
+    summary: 'List all progress scores (Admin, Student, or Parent Only)',
     description:
       'Returns all progress scores, ordered by year and month ascending (for line chart rendering). ' +
       'Optionally filter by `studentId` to return only scores for a specific student. ' +
@@ -81,7 +79,7 @@ export class ProgressScoresController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single progress score',
+    summary: 'Get a single progress score (Admin, Student, or Parent Only)',
     description:
       'Fetches one progress score by its UUID. ' +
       'Returns 404 if no score with the given ID exists.',
@@ -102,7 +100,7 @@ export class ProgressScoresController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Update a progress score',
+    summary: 'Update a progress score (Admin Only)',
     description:
       'Partially updates a progress score. All fields are optional. ' +
       'Note: `studentId` cannot be changed — scores are permanently tied to their student.',
@@ -126,7 +124,7 @@ export class ProgressScoresController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete a progress score',
+    summary: 'Delete a progress score (Admin Only)',
     description:
       'Permanently deletes a progress score. This action is irreversible. ' +
       'The linked student profile is not affected.',

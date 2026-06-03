@@ -41,14 +41,25 @@ export class StudentOrganizationsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all organization memberships' })
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
+  @ApiOperation({
+    summary:
+      'Retrieve all organization memberships (Admin, Student, or Parent Only)',
+  })
   findAll() {
     return this.studentOrganizationsService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Retrieve a single organization membership by ID' })
-  @ApiParam({ name: 'id', description: 'UUID of the student-organization membership record' })
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
+  @ApiOperation({
+    summary:
+      'Retrieve a single organization membership by ID (Admin, Student, or Parent Only)',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the student-organization membership record',
+  })
   findOne(@Param('id') id: string) {
     return this.studentOrganizationsService.findOne(id);
   }
@@ -56,7 +67,10 @@ export class StudentOrganizationsController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Update a membership role or status (Admin only)' })
-  @ApiParam({ name: 'id', description: 'UUID of the student-organization membership record' })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the student-organization membership record',
+  })
   @ApiBody({ type: UpdateStudentOrganizationDto })
   update(@Param('id') id: string, @Body() dto: UpdateStudentOrganizationDto) {
     return this.studentOrganizationsService.update(id, dto);
@@ -64,8 +78,13 @@ export class StudentOrganizationsController {
 
   @Delete(':id')
   @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Remove a student from an organization (Admin only)' })
-  @ApiParam({ name: 'id', description: 'UUID of the student-organization membership record' })
+  @ApiOperation({
+    summary: 'Remove a student from an organization (Admin only)',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the student-organization membership record',
+  })
   remove(@Param('id') id: string) {
     return this.studentOrganizationsService.remove(id);
   }
