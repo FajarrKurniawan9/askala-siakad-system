@@ -32,4 +32,26 @@ export class RegisterDto {
   @IsEnum(Role)
   @IsOptional()
   role?: Role;
+
+  // ── Student-specific fields (wajib jika role = STUDENT) ────────
+
+  @ApiPropertyOptional({ example: '20240001', description: 'Nomor Induk Siswa (otomatis di-generate jika tidak diisi)' })
+  @IsString()
+  @IsOptional()
+  nis?: string;
+
+  @ApiPropertyOptional({ example: 'XI-IPA 2', description: 'Kelas siswa (contoh: X-IPA 1, XI-IPS 2)' })
+  @IsString()
+  @IsOptional()
+  classRoom?: string;
+
+  @ApiPropertyOptional({ example: 'IPA', description: 'Jurusan siswa (contoh: IPA, IPS)' })
+  @IsString()
+  @IsOptional()
+  major?: string;
+
+  @ApiPropertyOptional({ example: 'XI', description: 'Tingkat kelas siswa (contoh: X, XI, XII)' })
+  @IsString()
+  @IsOptional()
+  grade?: string;
 }

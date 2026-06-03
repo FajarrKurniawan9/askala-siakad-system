@@ -39,12 +39,24 @@ export class AuthService {
       });
 
       // Auto-create role profile sesuai role
-      if (role === 'PARENT') {
+      if (role === 'STUDENT') {
+        const nis =
+          dto.nis ||
+          `AUTO${Date.now().toString().slice(-8)}${user.id}`;
+        await tx.student.create({
+          data: {
+            userId: user.id,
+            nis,
+            classRoom: dto.classRoom || 'Belum ditentukan',
+            major: dto.major || 'Umum',
+            grade: dto.grade || 'X',
+          },
+        });
+      } else if (role === 'PARENT') {
         await tx.parent.create({ data: { userId: user.id } });
       } else if (role === 'ADMIN') {
         await tx.adminProfile.create({ data: { userId: user.id } });
       }
-      // STUDENT: tidak auto-create karena butuh nis, classRoom, major, grade
       // TEACHER: tidak ada tabel profil terpisah di schema
 
       return user;
