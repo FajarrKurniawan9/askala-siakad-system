@@ -92,7 +92,7 @@ export class StudentsController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
     summary: 'Update a student profile',
     description:

@@ -90,7 +90,7 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
     summary: 'Update a user account',
     description:
