@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -106,7 +107,6 @@ export class SubmissionsController {
       'Update `fileUrl`, `note`, or `status` freely with no extra requirements.\n\n' +
       '**Verification flow** (`status: "VERIFIED"`): ' +
       'Marks the submission as officially verified. ' +
-      "The `verifiedBy` field is **required** and must contain the verifying admin's numeric User ID as a string. " +
       'This triggers an atomic database transaction that: ' +
       '(1) sets `status` to `VERIFIED` and records `verifiedAt`, ' +
       '(2) automatically creates an incoming treasury record for the linked organization if the bill has an `orgId`, ' +
@@ -131,7 +131,11 @@ export class SubmissionsController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateSubmissionDto,
+    @Request() req: any,
   ) {
+    if (dto.status === 'VERIFIED' && req.user?.userId) {
+      dto.verifiedBy = String(req.user.userId);
+    }
     return this.submissionsService.update(id, dto);
   }
 
