@@ -7,10 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: [
-      process.env.FRONTEND_URL ?? 'http://localhost:3000',
-      'https://app-askala.vercel.app/',
-    ],
+    origin: ['http://localhost:3000', 'https://app-askala.vercel.app/'],
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   });
