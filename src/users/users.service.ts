@@ -22,7 +22,7 @@ const USER_SELECT = {
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   // ── Create ──────────────────────────────────────────────────────────────────
 
@@ -98,6 +98,19 @@ export class UsersService {
         const existing = await this.prisma.adminProfile.findUnique({ where: { userId: id } });
         if (!existing) {
           await this.prisma.adminProfile.create({ data: { userId: id } });
+        }
+      } else if (dto.role === 'STUDENT') {
+        const existing = await this.prisma.student.findUnique({ where: { userId: id } });
+        if (!existing) {
+          await this.prisma.student.create({
+            data: {
+              userId: id,
+              nis: `AUTO${Date.now().toString().slice(-8)}${id}`,
+              classRoom: 'Belum ditentukan',
+              major: 'Umum',
+              grade: 'X'
+            }
+          });
         }
       }
     }
