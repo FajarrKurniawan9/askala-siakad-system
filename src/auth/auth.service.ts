@@ -77,16 +77,10 @@ export class AuthService {
   async getProfile(userId: number) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        avatarUrl: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
+      include: {
+        studentProfile: { select: { id: true, nis: true, classRoom: true, grade: true, major: true } },
+        parentProfile: { select: { id: true } },
+        adminProfile: { select: { id: true } },
       },
     });
 
@@ -100,6 +94,10 @@ export class AuthService {
       lastName: user.lastName,
       avatarUrl: user.avatarUrl,
       role: user.role,
+      studentId: user.studentProfile?.id ?? null,
+      studentProfile: user.studentProfile ?? null,
+      parentId: user.parentProfile?.id ?? null,
+      adminProfileId: user.adminProfile?.id ?? null,
     };
   }
 }
