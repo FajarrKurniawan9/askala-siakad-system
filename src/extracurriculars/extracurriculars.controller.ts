@@ -14,7 +14,6 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiParam,
-  ApiOkResponse,
 } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -23,7 +22,6 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { ExtracurricularsService } from './extracurriculars.service';
 import { CreateExtracurricularDto } from './dto/create-extracurricular.dto';
 import { UpdateExtracurricularDto } from './dto/update-extracurricular.dto';
-import { ExtracurricularEntity } from './entities/extracurricular.entity';
 @ApiTags('Extracurriculars')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,10 +43,6 @@ export class ExtracurricularsController {
 
   @Get()
   @ApiOperation({ summary: 'Retrieve all extracurricular activities' })
-  @ApiOkResponse({
-    type: ExtracurricularEntity,
-    isArray: true,
-  })
   findAll() {
     return this.extracurricularsService.findAll();
   }

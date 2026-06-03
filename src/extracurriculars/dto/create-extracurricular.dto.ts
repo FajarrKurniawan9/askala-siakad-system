@@ -3,24 +3,24 @@ import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateExtracurricularDto {
   @ApiProperty({
-    example: 'Flag Corps (Paskibra)',
-    description: 'Name of the extracurricular activity',
+    example: 'Paskibra (Flag Corps)',
+    description: 'Nama kegiatan ekstrakurikuler',
   })
   @IsString()
   @IsNotEmpty()
   name!: string;
 
   @ApiPropertyOptional({
-    example: 'Marching drill and flag-raising ceremony practice',
-    description: 'Brief description of the extracurricular activity',
+    example: 'Latihan baris-berbaris dan upacara pengibaran bendera',
+    description: 'Deskripsi singkat mengenai ekstrakurikuler',
   })
   @IsString()
   @IsOptional()
   description?: string;
 
   @ApiPropertyOptional({
-    example: 'Every Wednesday, 3:00 PM',
-    description: 'Recurring schedule for practice or meetings',
+    example: 'Setiap Rabu, pukul 15:00 WIB',
+    description: 'Jadwal rutin latihan atau pertemuan ekstrakurikuler',
   })
   @IsString()
   @IsOptional()
@@ -28,7 +28,7 @@ export class CreateExtracurricularDto {
 
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
-    description: 'UUID of the student enrolling in this extracurricular',
+    description: 'UUID siswa yang mendaftar ekstrakurikuler ini',
   })
   @IsUUID()
   @IsNotEmpty()

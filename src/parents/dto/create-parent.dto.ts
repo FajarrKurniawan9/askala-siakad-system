@@ -4,7 +4,7 @@ import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateParentDto {
   @ApiProperty({
-    description: 'The ID of the User account to link as a Parent profile',
+    description: 'ID akun pengguna (user) yang akan dihubungkan sebagai profil Orang Tua/Wali',
     example: 42,
   })
   @IsInt()

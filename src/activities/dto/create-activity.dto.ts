@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
   IsNotEmpty,
@@ -5,16 +6,15 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateActivityDto {
-  @ApiProperty({ description: 'Title of the activity', example: 'Juara 1 Lomba Debat' })
+  @ApiProperty({ description: 'Judul kegiatan siswa', example: 'Juara 1 Lomba Debat' })
   @IsString()
   @IsNotEmpty()
   title!: string;
 
   @ApiProperty({
-    description: 'Type/category of the activity',
+    description: 'Tipe atau kategori kegiatan',
     example: 'Prestasi',
     enum: ['Prestasi', 'Organisasi', 'Eskul', 'Pembayaran'],
   })
@@ -22,13 +22,13 @@ export class CreateActivityDto {
   @IsNotEmpty()
   type!: string;
 
-  @ApiPropertyOptional({ description: 'Detailed description of the activity' })
+  @ApiPropertyOptional({ description: 'Deskripsi detail mengenai kegiatan', example: 'Mengikuti lomba debat antar sekolah tingkat kota' })
   @IsString()
   @IsOptional()
   description?: string;
 
   @ApiPropertyOptional({
-    description: 'Date the activity occurred (ISO 8601). Defaults to now if omitted.',
+    description: 'Tanggal kegiatan berlangsung (format ISO 8601). Jika tidak diisi, akan menggunakan waktu saat ini.',
     example: '2025-06-01T00:00:00.000Z',
   })
   @IsDateString()
@@ -36,7 +36,7 @@ export class CreateActivityDto {
   date?: string;
 
   @ApiProperty({
-    description: 'UUID of the student this activity belongs to',
+    description: 'UUID siswa yang terkait dengan kegiatan ini',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @IsUUID()

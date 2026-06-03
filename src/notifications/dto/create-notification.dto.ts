@@ -9,8 +9,8 @@ import {
 
 export class CreateNotificationDto {
   @ApiProperty({
-    example: 'Your payment for the July tuition has been verified.',
-    description: 'The notification message text displayed to the user',
+    example: 'Pembayaran SPP bulan Juli Anda telah diverifikasi.',
+    description: 'Isi teks notifikasi yang akan ditampilkan kepada pengguna',
   })
   @IsString()
   @IsNotEmpty()
@@ -18,7 +18,7 @@ export class CreateNotificationDto {
 
   @ApiPropertyOptional({
     example: false,
-    description: 'Whether the notification has been read (defaults to false)',
+    description: 'Status apakah notifikasi sudah dibaca (default: false)',
   })
   @IsBoolean()
   @IsOptional()
@@ -26,8 +26,7 @@ export class CreateNotificationDto {
 
   @ApiPropertyOptional({
     example: 'payment',
-    description:
-      'Category of the notification (e.g., "payment", "achievement", "info")',
+    description: 'Kategori notifikasi (contoh: "payment", "achievement", "info")',
   })
   @IsString()
   @IsOptional()
@@ -35,7 +34,7 @@ export class CreateNotificationDto {
 
   @ApiProperty({
     example: 1,
-    description: 'ID of the user who will receive this notification',
+    description: 'ID pengguna yang akan menerima notifikasi ini',
   })
   @IsInt()
   @IsNotEmpty()

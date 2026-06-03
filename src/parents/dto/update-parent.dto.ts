@@ -4,7 +4,7 @@ import { IsInt, IsOptional } from 'class-validator';
 
 export class UpdateParentDto {
   @ApiPropertyOptional({
-    description: 'Reassign this Parent profile to a different User ID',
+    description: 'Pindahkan profil Orang Tua/Wali ini ke ID pengguna lain',
     example: 55,
   })
   @IsInt()
