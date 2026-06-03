@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PrismaModule } from '../prisma/prisma.module';
 import { StudentsModule } from './students/students.module';
 import { AuthModule } from './auth/auth.module';
 import { AchievementsModule } from './achievements/achievements.module';
@@ -19,6 +20,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
+    PrismaModule,
     StudentsModule,
     AuthModule,
     AchievementsModule,
@@ -39,3 +41,4 @@ import { NotificationsModule } from './notifications/notifications.module';
   providers: [AppService],
 })
 export class AppModule {}
+

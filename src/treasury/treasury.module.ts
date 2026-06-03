@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TreasuryService } from './treasury.service';
 import { TreasuryController } from './treasury.controller';
-import { PrismaService } from '../../prisma/prisma.service';
 
 @Module({
   controllers: [TreasuryController],
-  providers: [TreasuryService, PrismaService],
+  providers: [TreasuryService],
 })
 export class TreasuryModule {}

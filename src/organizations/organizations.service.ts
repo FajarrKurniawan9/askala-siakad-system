@@ -82,7 +82,20 @@ export class OrganizationsService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.schoolOrg.delete({ where: { id } });
-    return { message: `Organization #${id} deleted successfully` };
+    try {
+      await this.prisma.schoolOrg.delete({ where: { id } });
+      return { message: `Organization #${id} deleted successfully` };
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2003'
+      ) {
+        throw new ConflictException(
+          `Organisasi #${id} tidak bisa dihapus karena masih memiliki data terkait (transaksi kas, anggota, atau tagihan). Hapus data terkait terlebih dahulu.`,
+        );
+      }
+      throw err;
+    }
   }
 }
+

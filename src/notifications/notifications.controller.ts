@@ -55,9 +55,9 @@ export class NotificationsController {
     summary:
       'Retrieve a single notification by ID (Admin, Student, or Parent Only)',
   })
-  @ApiParam({ name: 'id', description: 'Numeric ID of the notification' })
+  @ApiParam({ name: 'id', description: 'UUID of the notification' })
   findOne(@Param('id') id: string) {
-    return this.notificationsService.findOne(+id);
+    return this.notificationsService.findOne(id);
   }
 
   @Patch(':id')
@@ -65,13 +65,13 @@ export class NotificationsController {
   @ApiOperation({
     summary: 'Update a notification (Admin Only)',
   })
-  @ApiParam({ name: 'id', description: 'Numeric ID of the notification' })
+  @ApiParam({ name: 'id', description: 'UUID of the notification' })
   @ApiBody({ type: UpdateNotificationDto })
   update(
     @Param('id') id: string,
     @Body() updateNotificationDto: UpdateNotificationDto,
   ) {
-    return this.notificationsService.update(+id, updateNotificationDto);
+    return this.notificationsService.update(id, updateNotificationDto);
   }
 
   @Delete(':id')
@@ -79,8 +79,9 @@ export class NotificationsController {
   @ApiOperation({
     summary: 'Delete a notification by ID (Admin Only)',
   })
-  @ApiParam({ name: 'id', description: 'Numeric ID of the notification' })
+  @ApiParam({ name: 'id', description: 'UUID of the notification' })
   remove(@Param('id') id: string) {
-    return this.notificationsService.remove(+id);
+    return this.notificationsService.remove(id);
   }
 }
+
