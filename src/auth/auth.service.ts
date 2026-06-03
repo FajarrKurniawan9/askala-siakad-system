@@ -23,18 +23,38 @@ export class AuthService {
     if (existing) throw new ConflictException('Email already registered');
 
     const hashed = await bcrypt.hash(dto.password, 10);
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashed,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        phone: dto.phone,
-        role: dto.role ?? 'STUDENT',
-      },
+    const role = dto.role ?? 'STUDENT';
+
+    // Gunakan transaction agar User + Role Profile dibuat secara atomik
+    const result = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          email: dto.email,
+          password: hashed,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          phone: dto.phone,
+          role,
+        },
+      });
+
+      // Auto-create role profile sesuai role
+      if (role === 'PARENT') {
+        await tx.parent.create({ data: { userId: user.id } });
+      } else if (role === 'ADMIN') {
+        await tx.adminProfile.create({ data: { userId: user.id } });
+      }
+      // STUDENT: tidak auto-create karena butuh nis, classRoom, major, grade
+      // TEACHER: tidak ada tabel profil terpisah di schema
+
+      return user;
     });
 
-    return { message: 'Registration successful', userId: user.id };
+    return {
+      message: 'Registration successful',
+      userId: result.id,
+      role: result.role,
+    };
   }
 
   async login(dto: LoginDto) {

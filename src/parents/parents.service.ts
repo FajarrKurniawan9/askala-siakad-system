@@ -69,7 +69,15 @@ export class ParentsService {
 
   async findAll() {
     return this.prisma.parent.findMany({
-      include: PARENT_INCLUDE,
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
       orderBy: { user: { firstName: 'asc' } },
     });
   }

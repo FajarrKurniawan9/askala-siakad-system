@@ -32,9 +32,23 @@ export class UsersService {
     if (existing) throw new ConflictException('Email already registered');
 
     const hashed = await bcrypt.hash(dto.password, 10);
-    return this.prisma.user.create({
-      data: { ...dto, password: hashed },
-      select: USER_SELECT,
+    const role = dto.role ?? 'STUDENT';
+
+    // Gunakan transaction agar User + Role Profile dibuat secara atomik
+    return this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: { ...dto, password: hashed, role },
+        select: USER_SELECT,
+      });
+
+      // Auto-create role profile sesuai role
+      if (role === 'PARENT') {
+        await tx.parent.create({ data: { userId: user.id } });
+      } else if (role === 'ADMIN') {
+        await tx.adminProfile.create({ data: { userId: user.id } });
+      }
+
+      return user;
     });
   }
 
@@ -58,7 +72,7 @@ export class UsersService {
   // ── Update ──────────────────────────────────────────────────────────────────
 
   async update(id: number, dto: UpdateUserDto) {
-    await this.findOne(id);
+    const currentUser = await this.findOne(id);
 
     if (dto.email) {
       const conflict = await this.prisma.user.findFirst({
@@ -70,6 +84,21 @@ export class UsersService {
     const data: Partial<typeof dto & { password?: string }> = { ...dto };
     if (dto.password) {
       data.password = await bcrypt.hash(dto.password, 10);
+    }
+
+    // Jika role berubah, buat profile baru sesuai role target
+    if (dto.role && dto.role !== currentUser.role) {
+      if (dto.role === 'PARENT') {
+        const existing = await this.prisma.parent.findUnique({ where: { userId: id } });
+        if (!existing) {
+          await this.prisma.parent.create({ data: { userId: id } });
+        }
+      } else if (dto.role === 'ADMIN') {
+        const existing = await this.prisma.adminProfile.findUnique({ where: { userId: id } });
+        if (!existing) {
+          await this.prisma.adminProfile.create({ data: { userId: id } });
+        }
+      }
     }
 
     return this.prisma.user.update({
