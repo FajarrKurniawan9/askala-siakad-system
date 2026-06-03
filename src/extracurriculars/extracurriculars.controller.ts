@@ -42,13 +42,21 @@ export class ExtracurricularsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all extracurricular activities' })
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
+  @ApiOperation({
+    summary:
+      'Retrieve all extracurricular activities (Admin, Student, or Parent Only)',
+  })
   findAll() {
     return this.extracurricularsService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Retrieve a single extracurricular activity by ID' })
+  @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
+  @ApiOperation({
+    summary:
+      'Retrieve a single extracurricular activity by ID (Admin, Student, or Parent Only)',
+  })
   @ApiParam({ name: 'id', description: 'UUID of the extracurricular record' })
   findOne(@Param('id') id: string) {
     return this.extracurricularsService.findOne(id);

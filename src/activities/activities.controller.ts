@@ -38,7 +38,7 @@ export class ActivitiesController {
   @Post()
   @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
-    summary: 'Log a student activity',
+    summary: 'Log a student activity (Admin Or Student Only)',
     description:
       'Creates a new activity log entry linked to a specific student. ' +
       'The `studentId` must reference an existing student profile — a 404 is returned otherwise. ' +
@@ -56,7 +56,7 @@ export class ActivitiesController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all activities',
+    summary: 'List all activities (Optionally filter by student)',
     description:
       'Returns all activity log entries, ordered by creation date (newest first). ' +
       'Optionally filter by `studentId` to return only activities for a specific student. ' +
@@ -78,7 +78,7 @@ export class ActivitiesController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single activity',
+    summary: 'Get a single activity (Admin, Student, or Parent Only)',
     description:
       'Fetches one activity log entry by its UUID. ' +
       'Returns 404 if no activity with the given ID exists.',
@@ -99,7 +99,7 @@ export class ActivitiesController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Update an activity',
+    summary: 'Update an activity (Admin Only)',
     description:
       'Partially updates an activity log entry. All fields are optional. ' +
       'Note: `studentId` cannot be changed — activities are permanently tied to their student.',
@@ -123,7 +123,7 @@ export class ActivitiesController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete an activity',
+    summary: 'Delete an activity (Admin Only)',
     description:
       'Permanently deletes an activity log entry. This action is irreversible. ' +
       'The linked student profile is not affected.',

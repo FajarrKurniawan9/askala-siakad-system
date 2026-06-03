@@ -26,7 +26,8 @@ export class CreateNotificationDto {
 
   @ApiPropertyOptional({
     example: 'payment',
-    description: 'Kategori notifikasi (contoh: "payment", "achievement", "info")',
+    description:
+      'Kategori notifikasi (contoh: "payment", "achievement", "info")',
   })
   @IsString()
   @IsOptional()

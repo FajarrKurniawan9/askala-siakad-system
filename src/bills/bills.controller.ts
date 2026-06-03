@@ -36,7 +36,7 @@ export class BillsController {
   @Post()
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Create a payment bill (tagihan)',
+    summary: 'Create a payment bill (tagihan) (Admin Only)',
     description:
       'Creates a new payment bill that can be assigned to students via the Submissions endpoint. ' +
       'The `amount` must be a positive integer in IDR (Indonesian Rupiah). ' +
@@ -55,7 +55,7 @@ export class BillsController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all payment bills',
+    summary: 'List all payment bills (Admin, Student, or Parent Only)',
     description:
       'Returns all payment bills ordered by creation date (newest first). ' +
       'If a bill is linked to a school organization, the full organization details are included in the response.',
@@ -70,7 +70,7 @@ export class BillsController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single payment bill',
+    summary: 'Get a single payment bill (Admin, Student, or Parent Only)',
     description:
       'Fetches one payment bill by its UUID, including any linked organization details.',
   })
@@ -90,7 +90,7 @@ export class BillsController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Update a payment bill',
+    summary: 'Update a payment bill (Admin Only)',
     description:
       'Partially updates a payment bill. All fields are optional. ' +
       'If `orgId` is changed to a new value, that organization must exist — a 404 is returned otherwise. ' +
@@ -113,7 +113,7 @@ export class BillsController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete a payment bill',
+    summary: 'Delete a payment bill (Admin Only)',
     description:
       'Permanently deletes a payment bill. This action is irreversible. ' +
       'Warning: deletion will fail if student payment submissions are still linked to this bill. ' +

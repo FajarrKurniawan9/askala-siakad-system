@@ -38,7 +38,7 @@ export class AchievementsController {
   @Post()
   @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
-    summary: 'Record a student achievement',
+    summary: 'Record a student achievement (Admin Or Student Only)',
     description:
       'Creates a new achievement record linked to a specific student. ' +
       'The `studentId` must reference an existing student profile — a 404 is returned otherwise. ' +
@@ -57,7 +57,7 @@ export class AchievementsController {
   @Get()
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'List all achievements',
+    summary: 'List all achievements (Optionally filter by student)',
     description:
       'Returns all achievement records, ordered by creation date (newest first). ' +
       'Optionally filter by `studentId` to return only achievements for a specific student. ' +
@@ -80,7 +80,7 @@ export class AchievementsController {
   @Get(':id')
   @Roles(Role.ADMIN, Role.STUDENT, Role.PARENT)
   @ApiOperation({
-    summary: 'Get a single achievement',
+    summary: 'Get a single achievement (Admin, Student, or Parent Only)',
     description:
       'Fetches one achievement by its UUID. ' +
       'Returns 404 if no achievement with the given ID exists.',
@@ -101,7 +101,7 @@ export class AchievementsController {
   @Patch(':id')
   @Roles(Role.ADMIN, Role.STUDENT)
   @ApiOperation({
-    summary: 'Update an achievement',
+    summary: 'Update an achievement (Admin or Student Only)',
     description:
       'Partially updates an achievement record. All fields are optional. ' +
       'To officially verify a student achievement, set `isVerified: true`. ' +
@@ -128,7 +128,7 @@ export class AchievementsController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({
-    summary: 'Delete an achievement',
+    summary: 'Delete an achievement (Admin Only)',
     description:
       'Permanently deletes an achievement record. This action is irreversible. ' +
       'The linked student profile is not affected.',
